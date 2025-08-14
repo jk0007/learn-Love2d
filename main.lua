@@ -29,7 +29,8 @@ local function newButton(text,fn)
     }
 end
 
-local menuButtons ={}
+local menuButtons = {}
+local pauseButtons = {}
 
 function love.keypressed(key)
     print(key)
@@ -39,18 +40,15 @@ function love.keypressed(key)
         gameEnable = true
         pauseEnable = false
     end
-    if key == 'p' then
-        pauseEnable = not pauseEnable
-        print("pause = " .. tostring(pauseEnable)) -- .. represents string concatenation
-    end
     --if press ESC in menuEnable mode then directly exit
-    --if press ESC in gameEnable mode then back to the menuEnable mode
+    --if press ESC in gameEnable mode then enter pauseEnable mode
+    -- game -> [ESC] -> pause -> menu -> [ESC] -> quit
     if key == 'escape' then
         if menuEnable then
             love.event.quit()
         else
-            menuEnable = true
-            gameEnable = false
+            pauseEnable = true
+            print("pause = " .. tostring(pauseEnable)) -- .. represents string concatenation
         end
     end
 end
@@ -78,7 +76,7 @@ function love.load()
 
     table.insert(menuButtons, newButton("Settings",
     function ()
-        print("Opening Menu")
+        print("Opening Settings")
         --TODO
     end))
 
@@ -86,6 +84,21 @@ function love.load()
     function ()
         print("Exit Game")
         love.event.quit(0)
+    end))
+
+    table.insert(pauseButtons, newButton("Continue",
+    function ()
+        print("Continue Game")
+        pauseEnable = false
+        gameEnable = true
+    end))
+
+    table.insert(pauseButtons, newButton("Exit to Menu",
+    function ()
+        print("Exit to Menu")
+        pauseEnable = false
+        menuEnable = true
+        gameEnable = false
     end))
 
     -- arrow stuff
@@ -202,6 +215,50 @@ function love.draw()
         end
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(image, frames[math.floor(currentFrame)], 650, 350, 0, 0.3, 0.3)
+    end
+
+    if (pauseEnable) then
+        local windowWidth = love.graphics.getWidth()
+        local windowHeight= love.graphics.getHeight()
+        local buttonWidth = windowWidth/3
+        local margin = 16
+        local totalHeight = #pauseButtons * BUTTON_HEIGHT + (#pauseButtons - 1) * margin
+        for i, button in ipairs(pauseButtons) do
+            local tlx = windowWidth/2 - buttonWidth/2
+            local tly = windowHeight/2 - totalHeight/2 + (i-1) * (BUTTON_HEIGHT + margin)
+            local buttonColorDefault = {0.4, 0.4, 0.5, 1.0}
+            local buttonColorHighLight = {0.8, 0.8, 0.9, 1.0}
+            local mouseX, mouseY = love.mouse.getPosition()
+            local hot = mouseX > tlx and mouseX < tlx + buttonWidth and mouseY > tly and mouseY < tly + BUTTON_HEIGHT
+            if hot then
+                love.graphics.setColor(unpack(buttonColorHighLight))
+            else
+                love.graphics.setColor(unpack(buttonColorDefault))
+            end
+
+            button.lastState = button.currentState
+            button.currentState = love.mouse.isDown(1)
+            if(not button.lastState and button.currentState and hot) then
+                button.fn()
+            end
+
+            love.graphics.rectangle(
+            "fill",
+            tlx,
+            tly,
+            buttonWidth,
+            BUTTON_HEIGHT)
+
+            love.graphics.setColor(0, 0, 0, 1)
+            local fontWidth = font:getWidth(button.text)
+            local fontHeight = font:getHeight(button.text)
+            love.graphics.print(
+            button.text,
+            font,
+            windowWidth/2 - fontWidth/2,
+            windowHeight/2 - totalHeight/2 + (i-1) * (BUTTON_HEIGHT + margin) + BUTTON_HEIGHT/2 - fontHeight/2)
+        end
+    love.graphics.setColor(1, 1, 1, 1)
     end
 end
 
