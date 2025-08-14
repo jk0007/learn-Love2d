@@ -5,6 +5,7 @@
 
 --test line
 --test line2
+--test line3
 
 if arg[2] == "debug" then
     require("lldebugger").start()
@@ -40,10 +41,10 @@ function love.keypressed(key)
     end
     if key == 'p' then
         pauseEnable = not pauseEnable
-        print("pause = " .. tostring(pauseEnable)) -- ..´ú±í×Ö·û´®Æ´½Ó
+        print("pause = " .. tostring(pauseEnable)) -- ..ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½Æ´ï¿½ï¿½
     end
-    --Èç¹ûÔÚmenu×´Ì¬°´escÖ±½ÓÍË³ö³ÌÐò
-    --Èç¹ûÔÚÓÎÏ·×´Ì¬°´escÍË³öµ½menu²Ëµ¥
+    --ï¿½ï¿½ï¿½ï¿½ï¿½menu×´Ì¬ï¿½ï¿½escÖ±ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½
+    --ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·×´Ì¬ï¿½ï¿½escï¿½Ë³ï¿½ï¿½ï¿½menuï¿½Ëµï¿½
     if key == 'escape' then
         if menuEnable then
             love.event.quit()
