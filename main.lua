@@ -3,6 +3,8 @@
     Your love2d game start here
 ]]
 
+--test line
+
 if arg[2] == "debug" then
     require("lldebugger").start()
 end
