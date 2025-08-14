@@ -32,6 +32,8 @@ end
 local menuButtons = {}
 local pauseButtons = {}
 
+local lastDownButton = nil
+local lastUpNutton = nil
 function love.keypressed(key)
     print(key)
 
@@ -194,7 +196,21 @@ function love.draw()
             button.lastState = button.currentState
             button.currentState = love.mouse.isDown(1)
             if(not button.lastState and button.currentState and hot) then
+                -- print("lastDownButton: " .. button.text)
+                lastDownButton = button
+            end
+
+            button.currentState = love.mouse.isDown(1)
+            if(button.lastState and not button.currentState and hot) then
+                -- print("lastUpButton: " .. button.text)
+                lastUpButton = button
+            end
+            -- if the button was pressed and released dring the mouse is still over the button
+            -- then call the button function
+            if lastDownButton == button and lastUpButton == button then
                 button.fn()
+                lastDownButton = nil
+                lastUpButton = nil
             end
 
             love.graphics.rectangle(
@@ -239,7 +255,20 @@ function love.draw()
             button.lastState = button.currentState
             button.currentState = love.mouse.isDown(1)
             if(not button.lastState and button.currentState and hot) then
+                -- print("lastDownButton: " .. button.text)
+                lastDownButton = button
+            end
+
+            button.currentState = love.mouse.isDown(1)
+            if(button.lastState and not button.currentState and hot) then
+                -- print("lastUpButton: " .. button.text)
+                lastUpButton = button
+            end
+            
+            if lastDownButton == button and lastUpButton == button then
                 button.fn()
+                lastDownButton = nil
+                lastUpButton = nil
             end
 
             love.graphics.rectangle(
