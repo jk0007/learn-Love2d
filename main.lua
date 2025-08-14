@@ -41,10 +41,10 @@ function love.keypressed(key)
     end
     if key == 'p' then
         pauseEnable = not pauseEnable
-        print("pause = " .. tostring(pauseEnable)) -- ..�����ַ���ƴ��
+        print("pause = " .. tostring(pauseEnable)) -- .. represents string concatenation
     end
-    --�����menu״̬��escֱ���˳�����
-    --�������Ϸ״̬��esc�˳���menu�˵�
+    --if press ESC in menuEnable mode then directly exit
+    --if press ESC in gameEnable mode then back to the menuEnable mode
     if key == 'escape' then
         if menuEnable then
             love.event.quit()
