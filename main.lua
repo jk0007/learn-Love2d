@@ -171,8 +171,6 @@ function love.load()
 
     -- effect = effect.chain(moonshine.effects.gaussianblur)
 
-
-
     -- effect = effect.chain(moonshine.effects.vignette)
 end
 
@@ -197,7 +195,6 @@ function love.update(dt)
 end
 
 function love.draw()
-
     if (gameEnable) then
         if effect then
             --shader stuff
