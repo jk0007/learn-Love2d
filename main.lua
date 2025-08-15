@@ -15,8 +15,8 @@ end
 
 -- menu stuff
 BUTTON_HEIGHT = 40
-local menuEnable = true
-local gameEnable = false
+local menuEnable = false
+local gameEnable = true
 local pauseEnable = false
 local font = nil
 local function newButton(text,fn)
