@@ -45,18 +45,24 @@ function love.keypressed(key)
     --if press ESC in menuEnable mode then directly exit
     --if press ESC in gameEnable mode then enter pauseEnable mode
     -- game -> [ESC] -> pause -> menu -> [ESC] -> quit
+    -- pause -> [ESC] -> game
     if key == 'escape' then
         if menuEnable then
             love.event.quit()
         else
-            pauseEnable = true
+            pauseEnable = not pauseEnable
             print("pause = " .. tostring(pauseEnable)) -- .. represents string concatenation
         end
     end
 end
 
-function love.load()
+--shader stuff
+local myShader = nil
+local moonshine = require 'moonshine'
+local effect = nil
 
+function love.load()
+    backgroundpic = love.graphics.newImage("Tropical_palm_and_vintage_sun.jpg")
     -- menu stuff
     font = love.graphics.newFont(20)
 
@@ -138,6 +144,36 @@ function love.load()
 
     currentFrame = 1
 
+    --shader stuff
+    myShader = love.graphics.newShader([[
+    vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords){
+        vec4 pixel = Texel(texture, texture_coords);
+        pixel.rgb = 1.0 - pixel.rgb;
+        return pixel;
+    }
+    ]])
+
+
+    effect = moonshine(moonshine.effects.boxblur)
+    effect.boxblur.radius = {0, 0}
+
+    effect = effect.chain(moonshine.effects.glow)
+    effect.glow.min_luma = 0.7
+    effect.glow.strength = 5
+
+    effect = effect.chain(moonshine.effects.godsray)
+    effect.godsray.samples = 5
+    effect.godsray.exposure = 0.2
+
+    -- effect = effect.chain(moonshine.effects.pixelate)
+    -- effect.pixelate.size = {3,3}
+    -- effect.pixelate.feedback = 0.3
+
+    -- effect = effect.chain(moonshine.effects.gaussianblur)
+
+
+
+    -- effect = effect.chain(moonshine.effects.vignette)
 end
 
 function love.update(dt)
@@ -161,16 +197,35 @@ function love.update(dt)
 end
 
 function love.draw()
+
     if (gameEnable) then
-        love.graphics.draw(arrow.image,
-            arrow.x, arrow.y, arrow.angle, 1, 1,
-            arrow.origin_x, arrow.origin_y)
-        love.graphics.circle("fill", mouse_x, mouse_y, 5)
-        -- love.graphics.circle("line", arrow.x, arrow.y, distance)
-        -- love.graphics.line(arrow.x, arrow.y, mouse_x, arrow.y)
-        -- love.graphics.line(mouse_x, arrow.y, mouse_x, mouse_y)
-        -- love.graphics.line(arrow.x, arrow.y, mouse_x, mouse_y)
-        -- love.graphics.print("angle: " .. arrow.angle, 10, 10)
+        if effect then
+            --shader stuff
+            effect(function()
+                love.graphics.draw(backgroundpic, 0, 0, 0, 0.8, 0.8)
+                love.graphics.setShader(myShader)
+                love.graphics.draw(arrow.image,arrow.x, arrow.y, arrow.angle, 1, 1,arrow.origin_x, arrow.origin_y)
+                love.graphics.setShader()
+                love.graphics.circle("fill", mouse_x, mouse_y, 5)
+                -- love.graphics.circle("line", arrow.x, arrow.y, distance)
+                -- love.graphics.line(arrow.x, arrow.y, mouse_x, arrow.y)
+                -- love.graphics.line(mouse_x, arrow.y, mouse_x, mouse_y)
+                -- love.graphics.line(arrow.x, arrow.y, mouse_x, mouse_y)
+                -- love.graphics.print("angle: " .. arrow.angle, 10, 10)
+            end)
+        else
+            love.graphics.draw(backgroundpic, 0, 0, 0, 0.8, 0.8)
+            love.graphics.setShader(myShader)
+            love.graphics.draw(arrow.image,arrow.x, arrow.y, arrow.angle, 1, 1,arrow.origin_x, arrow.origin_y)
+            love.graphics.setShader()
+            love.graphics.circle("fill", mouse_x, mouse_y, 5)
+            -- love.graphics.circle("line", arrow.x, arrow.y, distance)
+            -- love.graphics.line(arrow.x, arrow.y, mouse_x, arrow.y)
+            -- love.graphics.line(mouse_x, arrow.y, mouse_x, mouse_y)
+            -- love.graphics.line(arrow.x, arrow.y, mouse_x, mouse_y)
+            -- love.graphics.print("angle: " .. arrow.angle, 10, 10)
+        end
+
     end
 
     -- menu stuff
@@ -264,7 +319,7 @@ function love.draw()
                 -- print("lastUpButton: " .. button.text)
                 lastUpButton = button
             end
-            
+
             if lastDownButton == button and lastUpButton == button then
                 button.fn()
                 lastDownButton = nil
@@ -289,6 +344,7 @@ function love.draw()
         end
     love.graphics.setColor(1, 1, 1, 1)
     end
+
 end
 
 local love_errorhandler = love.errhand
