@@ -1,6 +1,7 @@
-local shader = nil
-local time = 0
+-- https://glslsandbox.com/e#370392.0
 
+-- TODO there is a bug when i should use tc(texture_coords) but not _(screen_coords) but i cannot fix it
+-- or maybe it is related with the resolution or sth. 
 return love.graphics.newShader([[
         extern float time;
         extern vec2 resolution;
@@ -13,9 +14,14 @@ return love.graphics.newShader([[
         }
 
         vec4 effect(vec4 color, Image texture, vec2 tc, vec2 _) {
-        
+            //How to debug a GLSL shader? -- https://stackoverflow.com/questions/2508818/how-to-debug-a-glsl-shader
+            //if(_.x >=5 && _.x <=10)
+            //    return vec4(1.0, 1.0, 1.0, 1.0);
+            //if(tc.x == 0)
+            //   return vec4(1.0, 1.0, 1.0, 1.0);
+
+            //vec2 uv = _ / resolution;
             vec2 uv = _ / resolution;
-            //vec2 uv = _ / resolution + 4;
             //vec2 uv = tc * resolution / resolution;
             // 增加分辨率相关的随机性
             float randomFactor = fract(sin(dot(uv, vec2(5555555.9898, 9.233))) * 33758.5453);
@@ -46,6 +52,56 @@ return love.graphics.newShader([[
         }
     ]])
 
+--main()version------------------------------------------------------------------------------------------------------
+ 
+-- local shader = nil
+-- local time = 0
+
+-- function love.load()
+--     shader = love.graphics.newShader([[
+--         extern float time;
+--         extern vec2 resolution;
+
+--         vec3 digitalRainbow(float value) {
+--             float r = clamp(sin(value + 0.0) * 0.5 + 0.5, 0.0, 1.0);
+--             float g = clamp(sin(value + 2.0944) * 0.5 + 0.5, 0.0, 1.0);
+--             float b = clamp(sin(value + 4.18879) * 0.5 + 0.5, 0.0, 1.0);
+--             return vec3(r, g, b);
+--         }
+
+--         vec4 effect(vec4 color, Image texture, vec2 tc, vec2 _) {
+--             vec2 uv = tc;
+
+--             // 增加分辨率相关的随机性
+--             vec2 screenUV = uv * resolution.xy; // 用分辨率生成像素坐标
+--             float randomFactor = fract(sin(dot(screenUV, vec2(5555555.9898, 9.233))) * 33758.5453);
+
+--             // 流场方向计算
+--             float scale = 9.0;
+--             float angle = sin(uv.x * scale) + cos(uv.y * scale) + time;
+--             vec2 flowDir = vec2(cos(angle), sin(angle));
+
+--             // 应用流场和随机因素
+--             vec2 newUV = uv + flowDir * randomFactor * 0.05;
+
+--             // 像素化效果（关键修复：使用分辨率进行像素化）
+--             vec2 scaledUV = newUV * 20.0; // 缩放 UV
+--             float pixelValue = 1.0 - step(0.5, mod(scaledUV.x + scaledUV.y, 2.0)); // 交替黑白像素
+
+--             // 背景色
+--             vec3 backgroundColor = vec3(0.0);
+
+--             // 动态彩虹色
+--             vec3 rainbowColor = digitalRainbow(mod(time + scaledUV.x + scaledUV.y, 6.2831));
+
+--             // 混合颜色
+--             vec3 finalColor = mix(backgroundColor, rainbowColor, pixelValue);
+
+--             return vec4(finalColor, 1.0);
+--         }
+--     ]])
+-- end
+
 -- function love.update(dt)
 --     time = time + dt
 -- end
@@ -55,10 +111,12 @@ return love.graphics.newShader([[
 --     shader:send("time", time)
 --     shader:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
 
---     love.graphics.rectangle("fill", 50, 50, love.graphics.getWidth() - 100, love.graphics.getHeight() - 100)
+--     love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 
 --     love.graphics.setShader()
 -- end
+
+-- webGL version------------------------------------------------------------------------------------------------------
 
 -- #ifdef GL_ES
 -- precision mediump float;

@@ -13,10 +13,12 @@ end
 
 -- love.graphics.setDefaultFilter('nearest', 'nearest')
 
+
+local time = 0
 -- menu stuff
 BUTTON_HEIGHT = 40
-local menuEnable = false
-local gameEnable = true
+local menuEnable = true
+local gameEnable = false
 local pauseEnable = false
 local font = nil
 local function newButton(text,fn)
@@ -61,6 +63,8 @@ local myShader = nil
 local moonshine = require 'moonshine'
 local effect = nil
 
+-- rainbowflow shader stuff
+local rainbowflow = require 'myshader/rainbowflow'
 function love.load()
     backgroundpic = love.graphics.newImage("Tropical_palm_and_vintage_sun.jpg")
     -- menu stuff
@@ -153,7 +157,6 @@ function love.load()
     }
     ]])
 
-
     effect = moonshine(moonshine.effects.boxblur)
     effect.boxblur.radius = {0, 0}
 
@@ -178,6 +181,8 @@ function love.load()
 end
 
 function love.update(dt)
+    time = time + dt
+
     if  not pauseEnable then
         --love.mouse.getPosition returns the x and y position of the cursor.
         mouse_x, mouse_y = love.mouse.getPosition()
@@ -204,6 +209,7 @@ function love.draw()
             effect(function()
                 love.graphics.draw(backgroundpic, 0, 0, 0, 0.8, 0.8)
                 love.graphics.setShader(myShader)
+                -- love.graphics.setShader(rainbowflow)
                 love.graphics.draw(arrow.image,arrow.x, arrow.y, arrow.angle, 1, 1,arrow.origin_x, arrow.origin_y)
                 love.graphics.setShader()
                 love.graphics.circle("fill", mouse_x, mouse_y, 5)
@@ -216,6 +222,7 @@ function love.draw()
         else
             love.graphics.draw(backgroundpic, 0, 0, 0, 0.8, 0.8)
             love.graphics.setShader(myShader)
+            -- love.graphics.setShader(rainbowflow)
             love.graphics.draw(arrow.image,arrow.x, arrow.y, arrow.angle, 1, 1,arrow.origin_x, arrow.origin_y)
             love.graphics.setShader()
             love.graphics.circle("fill", mouse_x, mouse_y, 5)
@@ -230,6 +237,26 @@ function love.draw()
 
     -- menu stuff
     if (menuEnable) then
+        -- local myShadertest = love.graphics.newShader[[
+        --     vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords )
+        --     {
+        --         if(texture_coords.x > 0.5)
+        --             return vec4(1.0,0.0,0.0,1.0);//red
+        --         else
+        --             return vec4(0.0,0.0,1.0,1.0);//blue
+        --     }
+        --     ]]
+        -- love.graphics.setShader(myShadertest)
+        -- love.graphics.rectangle("fill", 200, 200, 100, 100)
+        -- love.graphics.setShader()
+        
+        love.graphics.setShader(rainbowflow)
+        rainbowflow:send("time", time)
+        rainbowflow:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
+        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+        -- love.graphics.rectangle("fill", 50, 50, love.graphics.getWidth() - 100, love.graphics.getHeight() - 100)
+        love.graphics.setShader()
+
         local windowWidth = love.graphics.getWidth()
         local windowHeight= love.graphics.getHeight()
         local buttonWidth = windowWidth/3
