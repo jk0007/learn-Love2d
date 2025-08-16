@@ -158,12 +158,15 @@ function love.load()
     effect.boxblur.radius = {0, 0}
 
     effect = effect.chain(moonshine.effects.glow)
-    effect.glow.min_luma = 0.7
-    effect.glow.strength = 5
+    effect.glow.min_luma = 0.8
+    effect.glow.strength = 10
 
-    effect = effect.chain(moonshine.effects.godsray)
-    effect.godsray.samples = 5
-    effect.godsray.exposure = 0.2
+    effect = effect.chain(moonshine.effects.chromasep)
+    effect.chromasep.radius = 3
+
+    -- effect = effect.chain(moonshine.effects.godsray)
+    -- effect.godsray.samples = 5
+    -- effect.godsray.exposure = 0.2
 
     -- effect = effect.chain(moonshine.effects.pixelate)
     -- effect.pixelate.size = {3,3}
