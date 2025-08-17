@@ -20,6 +20,7 @@ BUTTON_HEIGHT = 40
 local menuEnable = true
 local gameEnable = false
 local pauseEnable = false
+local spriteEnable = false
 local font = nil
 local function newButton(text,fn)
     return
@@ -65,6 +66,8 @@ local effect = nil
 
 -- rainbowflow shader stuff
 local rainbowflow = require 'myshader/rainbowflow'
+local _3Dball = require 'myshader/_3Dball'
+
 function love.load()
     backgroundpic = love.graphics.newImage("Tropical_palm_and_vintage_sun.jpg")
     -- menu stuff
@@ -89,6 +92,7 @@ function love.load()
     table.insert(menuButtons, newButton("Settings",
     function ()
         print("Opening Settings")
+        spriteEnable = not spriteEnable
         --TODO
     end))
 
@@ -253,6 +257,11 @@ function love.draw()
         love.graphics.setShader(rainbowflow)
         rainbowflow:send("time", time)
         rainbowflow:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
+
+        -- love.graphics.setShader(_3Dball)
+        -- _3Dball:send("time", time)
+        -- _3Dball:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
+
         love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
         -- love.graphics.rectangle("fill", 50, 50, love.graphics.getWidth() - 100, love.graphics.getHeight() - 100)
         love.graphics.setShader()
@@ -311,8 +320,11 @@ function love.draw()
             windowWidth/2 - fontWidth/2,
             windowHeight/2 - totalHeight/2 + (i-1) * (BUTTON_HEIGHT + margin) + BUTTON_HEIGHT/2 - fontHeight/2)
         end
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(image, frames[math.floor(currentFrame)], 650, 350, 0, 0.3, 0.3)
+        love.graphics.setColor(1, 1, 1, 1)
+        if spriteEnable then
+            -- draw the jumping sprite
+            love.graphics.draw(image, frames[math.floor(currentFrame)], 650, 350, 0, 0.3, 0.3)
+        end
     end
 
     if (pauseEnable) then
