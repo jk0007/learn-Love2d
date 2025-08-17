@@ -73,11 +73,10 @@ return love.graphics.newShader([[
         //if(tc.x == 0)
         //   return vec4(1.0, 1.0, 1.0, 1.0);
 
-        //vec2 uv = _ / resolution;
+        //vec2 uv = gl_FragCoord.xy / resolution;//(ok)
+        vec2 uv = _ / resolution;//(ok)
 
-        vec2 uv = _ / resolution;
-
-        //vec2 uv = tc * resolution / resolution;
+        //vec2 uv = tc * resolution / resolution;//(wrong)
 
         // 增加分辨率相关的随机性
         float randomFactor = fract(sin(dot(uv, vec2(9872.0, 1124.0))) * 2222502.0);

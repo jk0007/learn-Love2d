@@ -67,6 +67,8 @@ local effect = nil
 -- rainbowflow shader stuff
 local rainbowflow = require 'myshader/rainbowflow'
 local _3Dball = require 'myshader/_3Dball'
+local grassland = require 'myshader/grassland'
+local matrix = require 'myshader/matrix'
 
 function love.load()
     backgroundpic = love.graphics.newImage("Tropical_palm_and_vintage_sun.jpg")
@@ -250,9 +252,6 @@ function love.draw()
         --             return vec4(0.0,0.0,1.0,1.0);//blue
         --     }
         --     ]]
-        -- love.graphics.setShader(myShadertest)
-        -- love.graphics.rectangle("fill", 200, 200, 100, 100)
-        -- love.graphics.setShader()
         
         love.graphics.setShader(rainbowflow)
         rainbowflow:send("time", time)
@@ -261,6 +260,15 @@ function love.draw()
         -- love.graphics.setShader(_3Dball)
         -- _3Dball:send("time", time)
         -- _3Dball:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
+
+        -- love.graphics.setShader(grassland)
+        -- grassland:send("time", time)
+        -- grassland:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
+        -- grassland:send("mouse", { mouse_x, mouse_y })
+
+        -- love.graphics.setShader(matrix)
+        -- matrix:send("time", time)
+        -- matrix:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
 
         love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
         -- love.graphics.rectangle("fill", 50, 50, love.graphics.getWidth() - 100, love.graphics.getHeight() - 100)
