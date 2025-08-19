@@ -15,6 +15,9 @@ end
 
 
 local time = 0
+
+
+
 -- menu stuff
 BUTTON_HEIGHT = 40
 local menuEnable = true
@@ -60,6 +63,7 @@ function love.keypressed(key)
 end
 
 --shader stuff
+local canvas = nil
 local myShader = nil
 local moonshine = require 'moonshine'
 local effect = nil
@@ -69,8 +73,43 @@ local rainbowflow = require 'myshader/rainbowflow'
 local _3Dball = require 'myshader/_3Dball'
 local grassland = require 'myshader/grassland'
 local matrix = require 'myshader/matrix'
+local balatro_background = require 'myshader/balatro-background'
+
+
+--jumping sprite stuff
+local sprite_width = 117
+local sprite_height = 233
+local sprite_x = 100
+local sprite_y = 100
+local sprite_scale_x = 0.3
+local sprite_scale_y = 0.3
+local spriteDragging = false
+
+function isMouseOverSprite(mx, my)
+    -- Sprite is drawn at sprite_x, sprite_y, scaled by 0.3
+    local sprite_w = sprite_width * sprite_scale_x
+    local sprite_h = sprite_height * sprite_scale_y
+    return mx >= sprite_x and mx <= sprite_x + sprite_w and
+           my >= sprite_y and my <= sprite_y + sprite_h
+end
+
+function love.mousepressed(x, y, button)
+    if spriteEnable and button == 1 then
+        if isMouseOverSprite(x, y) then
+            spriteDragging = true
+        end
+    end
+end
+
+function love.mousereleased(x, y, button)
+    if button == 1 then
+        spriteDragging = false
+    end
+end
 
 function love.load()
+    love.window.setMode(1440, 720, {resizable=true, vsync=0, minwidth=400, minheight=300})
+    canvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
     backgroundpic = love.graphics.newImage("Tropical_palm_and_vintage_sun.jpg")
     -- menu stuff
     font = love.graphics.newFont(20)
@@ -138,14 +177,14 @@ function love.load()
 
     frames = {}
 
-    local frame_width = 117
-    local frame_height = 233
+    local frame_width = sprite_width
+    local frame_height = sprite_height
 
     maxFrames = 5
 
     for i=0,1 do
         for j=0,2 do
-            table.insert(frames, love.graphics.newQuad(1 + j * (frame_width + 2), 1 + i * (frame_height + 2), frame_width, frame_height, width, height))
+            table.insert(frames, love.graphics.newQuad(2 + j * (frame_width + 2), 1 + i * (frame_height + 2), frame_width - 1, frame_height, width, height))
             if #frames == maxFrames then
                 break
             end
@@ -205,6 +244,12 @@ function love.update(dt)
         if currentFrame >= 6 then
             currentFrame = 1
         end
+
+        if spriteEnable and spriteDragging then
+            sprite_x = mouse_x - sprite_width * sprite_scale_x / 2
+            sprite_y = mouse_y - sprite_height * sprite_scale_y / 2
+        end
+
     end
 end
 
@@ -253,9 +298,10 @@ function love.draw()
         --     }
         --     ]]
         
-        love.graphics.setShader(rainbowflow)
-        rainbowflow:send("time", time)
-        rainbowflow:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
+        -- love.graphics.setShader(rainbowflow)
+        -- rainbowflow:send("time", time)
+        -- -- rainbowflow:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
+        
 
         -- love.graphics.setShader(_3Dball)
         -- _3Dball:send("time", time)
@@ -269,14 +315,26 @@ function love.draw()
         -- love.graphics.setShader(matrix)
         -- matrix:send("time", time)
         -- matrix:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
+        
+        love.graphics.setShader(balatro_background)
+        balatro_background:send("time", time)
+        balatro_background:send("spin_time", 0.00001 * time)
+        balatro_background:send("colour_1", {1.0, 0.0, 1.0, 1.0})
+        balatro_background:send("colour_2", {0.0, 1.0, 1.0, 1.0})
+        balatro_background:send("colour_3", {0.0, 0.0, 0.0, 1.0})
+        balatro_background:send("contrast", 2)
+        balatro_background:send("spin_amount", 2)
 
-        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+
+
+        love.graphics.draw(canvas, 0, 0)
+        -- love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
         -- love.graphics.rectangle("fill", 50, 50, love.graphics.getWidth() - 100, love.graphics.getHeight() - 100)
         love.graphics.setShader()
 
         local windowWidth = love.graphics.getWidth()
         local windowHeight= love.graphics.getHeight()
-        local buttonWidth = windowWidth/3
+        local buttonWidth = math.min(windowWidth/3, 300)
         local margin = 16
         local totalHeight = #menuButtons * BUTTON_HEIGHT + (#menuButtons - 1) * margin
         for i, button in ipairs(menuButtons) do
@@ -331,7 +389,7 @@ function love.draw()
         love.graphics.setColor(1, 1, 1, 1)
         if spriteEnable then
             -- draw the jumping sprite
-            love.graphics.draw(image, frames[math.floor(currentFrame)], 650, 350, 0, 0.3, 0.3)
+            love.graphics.draw(image, frames[math.floor(currentFrame)], sprite_x, sprite_y, 0, sprite_scale_x, sprite_scale_y)
         end
     end
 
