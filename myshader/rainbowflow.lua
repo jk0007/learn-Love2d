@@ -57,7 +57,7 @@
 --another parameter version------------------------------------------------------------------------------------------
 return love.graphics.newShader([[
     extern float time;
-    //extern vec2 resolution;
+    extern vec2 resolution;
 
     vec3 digitalRainbow(float value) {
         float r = clamp(sin(value + 0.0) * 0.5 + 0.5, 0.0, 1.0);
@@ -76,9 +76,10 @@ return love.graphics.newShader([[
         //   return vec4(1.0, 1.0, 1.0, 1.0);
 
         //vec2 uv = gl_FragCoord.xy / resolution;//(ok)
+        vec2 uv = love_PixelCoord.xy / resolution;//(ok)
         //vec2 uv = _ / resolution;//(ok)
 
-        vec2 uv = tc; //(with draw canvas its ok)
+        //vec2 uv = tc; //(with draw canvas its ok)
         //vec2 uv = tc * resolution / resolution;//(wrong)
 
         // 增加分辨率相关的随机性

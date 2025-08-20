@@ -13,7 +13,12 @@ return love.graphics.newShader([[
     vec4 effect(vec4 color, Image texture, vec2 tc, vec2 _) {
         //if(gl_FragCoord.x >=5 && gl_FragCoord.x <=10)
             //return vec4(1.0, 1.0, 1.0, 1.0);
-        vec2 h = resolution;
+        //vec2 h = resolution;
+
+        //built-in variable for screen size in LÖVE
+        //so we don't need to pass it as an external variable
+        vec2 h = love_ScreenSize.xy;
+
         vec3 i=vec3(0,0,-1.5),c=normalize(vec3((-1. + 2.* gl_FragCoord.xy /h.xy)*vec2(h.x/h.y,1),1));
         float j=dot(c,i),k=j*j+1.-dot(i,i),l=-j-sqrt(abs(k)),b=mix(-1.,l,step(.0,min(l,k))),m=time;
         vec3 n=normalize(i+c*b),o=a(m,c),p=a(m,reflect(c,n));

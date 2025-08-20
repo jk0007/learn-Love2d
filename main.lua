@@ -298,14 +298,14 @@ function love.draw()
         --     }
         --     ]]
         
-        -- love.graphics.setShader(rainbowflow)
-        -- rainbowflow:send("time", time)
-        -- -- rainbowflow:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
+        love.graphics.setShader(rainbowflow)
+        rainbowflow:send("time", time)
+        rainbowflow:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
         
 
         -- love.graphics.setShader(_3Dball)
         -- _3Dball:send("time", time)
-        -- _3Dball:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
+        -- -- -- _3Dball:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
 
         -- love.graphics.setShader(grassland)
         -- grassland:send("time", time)
@@ -316,14 +316,14 @@ function love.draw()
         -- matrix:send("time", time)
         -- matrix:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
         
-        love.graphics.setShader(balatro_background)
-        balatro_background:send("time", time)
-        balatro_background:send("spin_time", 0.00001 * time)
-        balatro_background:send("colour_1", {1.0, 0.0, 1.0, 1.0})
-        balatro_background:send("colour_2", {0.0, 1.0, 1.0, 1.0})
-        balatro_background:send("colour_3", {0.0, 0.0, 0.0, 1.0})
-        balatro_background:send("contrast", 2)
-        balatro_background:send("spin_amount", 2)
+        -- love.graphics.setShader(balatro_background)
+        -- balatro_background:send("time", time)
+        -- balatro_background:send("spin_time", 0.00001 * time)
+        -- balatro_background:send("colour_1", {1.0, 0.0, 1.0, 1.0})
+        -- balatro_background:send("colour_2", {0.0, 1.0, 1.0, 1.0})
+        -- balatro_background:send("colour_3", {0.0, 0.0, 0.0, 1.0})
+        -- balatro_background:send("contrast", 2)
+        -- balatro_background:send("spin_amount", 2)
 
 
 
