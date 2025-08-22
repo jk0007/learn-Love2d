@@ -300,7 +300,7 @@ function love.draw()
         
         love.graphics.setShader(rainbowflow)
         rainbowflow:send("time", time)
-        rainbowflow:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
+        -- rainbowflow:send("resolution", { love.graphics.getWidth(), love.graphics.getHeight() })
         
 
         -- love.graphics.setShader(_3Dball)
